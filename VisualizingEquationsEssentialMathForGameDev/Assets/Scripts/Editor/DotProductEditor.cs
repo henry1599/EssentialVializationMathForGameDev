@@ -96,7 +96,20 @@ public class DotProductEditor : EditorWindow
         Handles.Label(c, DotProduct(p0, p1, c).ToString("F1"), this.guiStyle);
         Handles.color = Color.black;
 
-        Handles.DrawAAPolyLine(3f, p0, c);
-        Handles.DrawAAPolyLine(3f, p1, c);
+        var cLeft = WorldRotation(p0, c, new Vector3(0.0f, 1.0f, 0.0f));
+        var cRight = WorldRotation(p0, c, new Vector3(0.0f, -1.0f, 0.0f));
+
+        Handles.DrawAAPolyLine(5f, p0, c);
+        Handles.DrawAAPolyLine(5f, p1, c);
+        Handles.DrawAAPolyLine(5f, c, cLeft);
+        Handles.DrawAAPolyLine(5f, c, cRight);
+    }
+    Vector3 WorldRotation(Vector3 p, Vector3 c, Vector3 pos)
+    {
+        Vector3 dir = (p - c).normalized;
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        Quaternion rot = Quaternion.AngleAxis(angle, Vector3.forward);
+
+        return c + rot * pos;
     }
 }
