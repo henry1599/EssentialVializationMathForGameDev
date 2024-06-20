@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class DotProductEditor : EditorWindow 
+public class DotProductEditor : CommonEditor, IUpdateSceneGUI
 {
     public Vector3 p0;
     public Vector3 p1;
@@ -25,9 +25,7 @@ public class DotProductEditor : EditorWindow
     {
         if (this.p0 == Vector3.zero && this.p1 == Vector3.zero)
         {
-            this.p0 = new Vector3(0.0f, 1.0f, 0.0f);
-            this.p1 = new Vector3(0.5f, 0.5f, 0.0f);
-            this.c = Vector3.zero;
+            InitValues();
         }
         this.obj = new SerializedObject(this);
         this.propP0 = obj.FindProperty("p0");
@@ -55,14 +53,7 @@ public class DotProductEditor : EditorWindow
             SceneView.RepaintAll();
         }
     }
-    private void DrawBlockUI(string lab, SerializedProperty prop)
-    {
-        EditorGUILayout.BeginHorizontal("box");
-        EditorGUILayout.LabelField(lab, GUILayout.Width(50));
-        EditorGUILayout.PropertyField(prop, GUIContent.none);
-        EditorGUILayout.EndHorizontal();
-    }
-    private void SceneGUI(SceneView view)
+    public void SceneGUI(SceneView view)
     {
         Handles.color = Color.red;
         Vector3 p0 = SetMovePoint(this.p0);
@@ -78,6 +69,12 @@ public class DotProductEditor : EditorWindow
             Repaint();
         }
         DrawLabel(p0, p1, c);
+    }
+    protected override void InitValues()
+    {
+        this.p0 = new Vector3(0.0f, 1.0f, 0.0f);
+        this.p1 = new Vector3(0.5f, 0.5f, 0.0f);
+        this.c = Vector3.zero;
     }
     Vector3 SetMovePoint(Vector3 pos)
     {
@@ -109,7 +106,6 @@ public class DotProductEditor : EditorWindow
         Vector3 dir = (p - c).normalized;
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         Quaternion rot = Quaternion.AngleAxis(angle, Vector3.forward);
-
         return c + rot * pos;
     }
 }
